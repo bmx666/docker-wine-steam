@@ -11,7 +11,9 @@ then
 fi
 
 # Copying the Dockerfile to set parameters.
-cp -f Dockerfile $TMP_INSTALL_DIR && cp -f finalize_installation.sh $TMP_INSTALL_DIR
+cp -f Dockerfile $TMP_INSTALL_DIR && \
+cp -f finalize_installation32.sh $TMP_INSTALL_DIR \
+cp -f finalize_installation64.sh $TMP_INSTALL_DIR
 
 # Setting the right user id.
 sed -i -e "s/1001/$MYUID/g" $TMP_INSTALL_DIR/Dockerfile

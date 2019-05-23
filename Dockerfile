@@ -7,11 +7,17 @@ ENV HOME /home/wine
 WORKDIR /home/wine
 
 # Adding the helper script and an alias to launch the steam to be installed.
-COPY finalize_installation.sh /home/wine/.finalize_installation.sh
-RUN chown wine:wine /home/wine/.finalize_installation.sh && \
-	chmod o+x /home/wine/.finalize_installation.sh && \
-	su -p -l wine -c "echo 'alias finalize_installation=\"bash /home/wine/.finalize_installation.sh\"' >> /home/wine/.bashrc" && \
-	su -p -l wine -c "echo 'alias steam=\"wine /home/wine/.wine/drive_c/Program\ Files/Steam/Steam.exe -no-cef-sandbox > /dev/null \"' >> /home/wine/.bashrc"
+COPY finalize_installation32.sh /home/wine/.finalize_installation32.sh
+COPY finalize_installation64.sh /home/wine/.finalize_installation64.sh
+RUN \
+	chown wine:wine /home/wine/.finalize_installation32.sh && \
+	chown wine:wine /home/wine/.finalize_installation64.sh && \
+	chmod o+x /home/wine/.finalize_installation32.sh && \
+	chmod o+x /home/wine/.finalize_installation64.sh && \
+	su -p -l wine -c "echo 'alias finalize_installation_32=\"bash /home/wine/.finalize_installation32.sh\"' >> /home/wine/.bashrc" && \
+	su -p -l wine -c "echo 'alias finalize_installation_64=\"bash /home/wine/.finalize_installation64.sh\"' >> /home/wine/.bashrc" && \
+	su -p -l wine -c "echo 'alias steam32=\"wine /home/wine/.wine32/drive_c/Program\ Files/Steam/Steam.exe -no-cef-sandbox > /dev/null \"' >> /home/wine/.bashrc" && \
+	su -p -l wine -c "echo 'alias steam64=\"wine /home/wine/.wine64/drive_c/Program\ Files\ \(x86\)/Steam/Steam.exe -no-cef-sandbox > /dev/null \"' >> /home/wine/.bashrc"
 
 # Disabling warning messages from wine, comment for debug purpose.
 ENV WINEDEBUG -all
