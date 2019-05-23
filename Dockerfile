@@ -41,7 +41,7 @@ RUN	dpkg --add-architecture i386 && \
 
 # Adding required ppas: graphics drivers and wine.
 	add-apt-repository ppa:graphics-drivers/ppa && \
-	wget -nc https://dl.winehq.org/wine-builds/Release.key && apt-key add Release.key && add-apt-repository https://dl.winehq.org/wine-builds/ubuntu/ && \
+	wget -nc https://dl.winehq.org/wine-builds/winehq.key && apt-key add winehq.key && add-apt-repository https://dl.winehq.org/wine-builds/ubuntu/ && \
 	apt-get update && \
 
 # Installation of graphics driver.
