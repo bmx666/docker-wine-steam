@@ -2,6 +2,10 @@
 
 CONTAINER_NAME=vaporized_wine
 
+if [ `lspci | grep -i '2d\|3d\|vga' | grep -i NVIDIA -c` -ge 1 ]; then
+	ENV_NVIDIA="--device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0"
+fi
+
 ( \
 	echo 'Trying to run a new data container.' && \
 	sudo docker run -it \
@@ -10,7 +14,7 @@ CONTAINER_NAME=vaporized_wine
 			-v ~/.Xauthority:/home/wine/.Xauthority \
 			--ipc="host" \
 			--device=/dev/snd:/dev/snd \
-			--device=/dev/nvidiactl --device=/dev/nvidia-uvm --device=/dev/nvidia0 \
+			$ENV_NVIDIA \
 			-v /run/user/`id -u`/pulse/native:/run/user/`id -u`/pulse/native \
 			-v `pwd`/shared_directory:/home/wine/shared_directory \
 			--net=host \
