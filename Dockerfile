@@ -13,10 +13,6 @@ RUN chown wine:wine /home/wine/.finalize_installation.sh && \
 	su -p -l wine -c "echo 'alias finalize_installation=\"bash /home/wine/.finalize_installation.sh\"' >> /home/wine/.bashrc" && \
 	su -p -l wine -c "echo 'alias steam=\"wine /home/wine/.wine/drive_c/Program\ Files/Steam/Steam.exe -no-cef-sandbox > /dev/null \"' >> /home/wine/.bashrc"
 
-# Setting up the wineprefix to force 32 bit architecture.
-ENV WINEPREFIX /home/wine/.wine
-ENV WINEARCH win32
-
 # Disabling warning messages from wine, comment for debug purpose.
 ENV WINEDEBUG -all
 
@@ -57,9 +53,14 @@ RUN	dpkg --add-architecture i386 && \
 # Installation of pulseaudio support for wine sound.
 	apt-get install -y --no-install-recommends pulseaudio:i386 && \
 	sed -i "s/; enable-shm = yes/enable-shm = no/g" /etc/pulse/daemon.conf && \
-	sed -i "s/; enable-shm = yes/enable-shm = no/g" /etc/pulse/client.conf && \
+	sed -i "s/; enable-shm = yes/enable-shm = no/g" /etc/pulse/client.conf
+
+# Setting up the wineprefix to force 32 bit architecture.
+ENV WINEPREFIX /home/wine/.wine32
+ENV WINEARCH win32
 
 # Installation of winetricks' tricks as wine user, comment if not needed.
+RUN \
 	su -p -l wine -c 'winecfg && wineserver --wait' && \
 	su -p -l wine -c 'winetricks -q winxp && wineserver --wait' && \
 	su -p -l wine -c 'winetricks -q sound=pulse && wineserver --wait' && \
@@ -67,9 +68,25 @@ RUN	dpkg --add-architecture i386 && \
 	su -p -l wine -c 'winetricks -q dotnet40 && wineserver --wait' && \
 	su -p -l wine -c 'winetricks -q xna40 && wineserver --wait' && \
 	su -p -l wine -c 'winetricks -q d3dx9 && wineserver --wait' && \
-	su -p -l wine -c 'winetricks -q directplay && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q directplay && wineserver --wait'
+
+# Setting up the wineprefix to force 32 bit architecture.
+ENV WINEPREFIX /home/wine/.wine64
+ENV WINEARCH win64
+
+# Installation of winetricks' tricks as wine user, comment if not needed.
+RUN \
+	su -p -l wine -c 'winecfg && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q win7 && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q sound=pulse && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q corefonts && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q dotnet40 && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q xna40 && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q d3dx9 && wineserver --wait' && \
+	su -p -l wine -c 'winetricks -q directplay && wineserver --wait'
 
 # Cleaning up.
+RUN \
 	apt-get autoremove -y --purge software-properties-common && \
 	apt-get autoremove -y --purge && \
 	apt-get clean -y && \
